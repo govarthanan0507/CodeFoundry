@@ -1,8 +1,8 @@
-# CodeFoundry V1 — Lifecycle Workflow
+# CodeFoundry Version 1.0.1 — Lifecycle Workflow
 
 ## 1. Purpose
 
-This document defines the V1 lifecycle that CodeFoundry uses to decide what should happen next.
+This document defines the lifecycle CodeFoundry uses to decide what should happen next and how work is executed by specialist agents.
 
 The lifecycle is a directed graph with controlled re-entry, not a one-way checklist.
 
@@ -68,15 +68,17 @@ For every meaningful stage:
 5. Identify assumptions and unknowns.
 6. Identify risks and dependencies.
 7. Determine whether research is required.
-8. Activate relevant specialists.
-9. Perform the stage work.
-10. Produce or update the required artifact.
-11. Validate the artifact.
-12. Determine whether a human gate applies.
-13. Stop if approval is required and not yet granted.
-14. Record the decision.
-15. Update project state.
-16. Determine the next stage.
+8. Build the task graph.
+9. Activate relevant specialist agents.
+10. Run independent tasks in parallel where safe.
+11. Collect and validate specialist results.
+12. Produce or update the required artifact.
+13. Validate the artifact.
+14. Determine whether a human gate applies.
+15. Stop if approval is required and not yet granted.
+16. Record the decision.
+17. Update project state and meaningful event history.
+18. Determine the next stage and task set.
 
 ## 3. Stage registry
 
@@ -107,7 +109,22 @@ For every meaningful stage:
 | Monitoring | Observe system and outcomes | monitoring evidence | Operational |
 | Incident / Improvement | Convert production evidence into action | incident/improvement record | Risk-based |
 
-## 4. Risk-based depth
+## 4. Parallel execution
+
+Version 1.0.1 separates lifecycle authority from specialist execution.
+
+Independent work may run concurrently when:
+
+- dependencies are satisfied,
+- outputs are independently producible,
+- writes do not conflict,
+- concurrency does not introduce a safety or correctness risk.
+
+Work must be serialized when it consumes another task's output, requires a human gate, or would create an authoritative write conflict.
+
+See `workflows/multi-agent-execution.md` for the execution contract.
+
+## 5. Risk-based depth
 
 Not every project needs the same ceremony.
 
@@ -127,7 +144,7 @@ High-risk work may require additional:
 
 Risk changes the amount of work, not the rule that consequential decisions require appropriate authority.
 
-## 5. Re-entry rules
+## 6. Re-entry rules
 
 A later discovery can invalidate an earlier stage.
 
@@ -155,11 +172,12 @@ When returning to an earlier stage:
 2. Record why re-entry occurred.
 3. Mark affected decisions as superseded or under review.
 4. Create a new revision.
-5. Re-run downstream gates affected by the change.
+5. Identify downstream tasks invalidated by the change.
+6. Re-run downstream gates affected by the change.
 
-## 6. Completion rule
+## 7. Completion rule
 
-A stage is not complete merely because an agent generated text.
+A stage is not complete merely because an agent generated text or code.
 
 It is complete when:
 
@@ -168,9 +186,26 @@ It is complete when:
 - required evidence exists,
 - the artifact is complete enough for the stage,
 - blockers are resolved or explicitly escalated,
-- required human approval exists.
+- required human approval exists,
+- downstream tasks are not relying on invalidated inputs.
 
-## 7. Production feedback loop
+## 8. Progress rule
+
+Human-facing progress is milestone-based.
+
+Report:
+
+- current phase,
+- active specialist work,
+- completed milestones,
+- blockers and waits,
+- material risks,
+- next gate,
+- next action.
+
+Do not make raw commands, file edits, or tool telemetry the primary progress stream.
+
+## 9. Production feedback loop
 
 Production is not the end.
 
