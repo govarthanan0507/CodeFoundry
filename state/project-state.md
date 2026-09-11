@@ -1,4 +1,4 @@
-# CodeFoundry V1 — Project State
+# CodeFoundry Version 1.0.1 — Project State
 
 Use this template as the durable state contract for a project managed by CodeFoundry.
 
@@ -7,7 +7,7 @@ project:
   name: ""
   description: ""
   created_at: ""
-  lifecycle_version: "V1"
+  lifecycle_version: "1.0.1"
 
 lifecycle:
   current_phase: "IDEA"
@@ -21,6 +21,20 @@ risk:
 
 roles:
   active: []
+
+execution:
+  progress_summary: ""
+  status_updated_at: ""
+  active_tasks: []
+  blocked_tasks: []
+  waiting_tasks: []
+  recent_events: []
+
+tasks:
+  ledger: []
+
+events:
+  log: []
 
 artifacts:
   completed: []
@@ -66,5 +80,9 @@ traceability:
 - Rejected decisions remain visible.
 - Superseded decisions remain visible for history.
 - Open risks remain visible until resolved or explicitly accepted.
-- Every state change should be attributable to a meaningful event or decision.
-- The current next action must be understandable without reconstructing the entire conversation.
+- Every material state change must be attributable to a meaningful event or decision.
+- Every material task must have an owner and execution state.
+- A blocked or waiting task must identify what it is waiting for.
+- Current progress must be understandable without reconstructing the conversation.
+- Progress percentages are approximate unless a deterministic measurement exists.
+- The task ledger and event log provide execution history; lifecycle state remains the authoritative current snapshot.
