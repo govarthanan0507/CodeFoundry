@@ -8,6 +8,21 @@ CodeFoundry is designed to take a software idea or software objective and guide 
 
 ---
 
+## Current version
+
+# Version 1.0.1 — Multi-Agent Execution & Progress Observability
+
+Version 1.0.1 is the first execution-focused evolution of the V1 foundation. It keeps lifecycle authority centralized in the orchestrator while allowing independent specialist agents to work concurrently where dependencies permit.
+
+It directly addresses two findings from the first real lifecycle exercise:
+
+1. specialist roles were conceptual within one session instead of explicit independent work identities;
+2. user-facing progress was too close to low-level execution telemetry.
+
+It also closes the identified governance defect where implementation could occur before technical-plan approval.
+
+---
+
 ## Why CodeFoundry exists
 
 Software work often begins with implementation before the problem, users, risks, requirements, architecture, release strategy, or operational model are sufficiently understood.
@@ -76,13 +91,9 @@ The lifecycle is intentionally non-linear. Evidence discovered later can send a 
 
 ---
 
-## V1 status
+## V1 foundation
 
-**V1 foundation is implemented.**
-
-V1 is deliberately lightweight. It is not a SaaS platform, dashboard, distributed orchestration engine, billing system, or enterprise product.
-
-V1 establishes the operational contract that a host agent can follow:
+The original V1 foundation established:
 
 - automatic lifecycle initiation for new ideas
 - explicit lifecycle stages
@@ -95,41 +106,133 @@ V1 establishes the operational contract that a host agent can follow:
 - traceability expectations
 - production and post-production lifecycle coverage
 
-The goal of V1 is to prove the control loop before adding infrastructure.
+The goal was to prove the control loop before adding execution infrastructure.
 
 ---
 
-## Core operating model
+## Version 1.0.1 additions
 
-CodeFoundry separates **orchestration** from **judgment**.
+### Independent specialist execution
 
-### System responsibility
+Specialists are now defined as independent work identities rather than merely roles performed sequentially inside the orchestrator's reasoning.
 
-The system determines:
+```text
+                         HUMAN
+                           │
+                           ▼
+                    ORCHESTRATOR
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+       PRODUCT          RESEARCH       ENGINEERING
+          │                │                │
+          └────────────────┼────────────────┘
+                           ▼
+                           QA
+                           │
+                           ▼
+                        SECURITY
+                           │
+                           ▼
+                     ORCHESTRATOR
+                           │
+                           ▼
+                      HUMAN GATE
+```
 
-- what phase the project is in
-- what is missing
-- what is uncertain
-- what should happen next
-- which specialist is appropriate
-- what evidence should be researched
-- which artifact should be produced
-- whether an artifact is sufficiently complete for the current gate
+The host/runtime may implement an agent as a separate session, worker process, queued job, container, remote agent, or another isolated execution identity.
 
-### Human responsibility
+### Parallel execution
 
-The human determines:
+Independent work can run concurrently when:
 
-- whether a consequential direction is acceptable
-- whether a product decision is approved
-- whether risk is acceptable
-- whether a release should proceed
-- whether an exception should be accepted
-- whether the project should continue, change direction, or stop
+- dependencies are satisfied;
+- outputs are independently producible;
+- writes do not conflict;
+- concurrency does not introduce a safety or correctness risk.
+
+Dependent work must wait. Human-gated work must stop until explicit approval exists.
+
+### Task ledger
+
+Every material task now has:
+
+- task ID
+- owner
+- phase
+- objective
+- dependencies
+- inputs
+- expected output
+- status
+- evidence
+- blockers/failure information
+
+Execution states include:
+
+`READY`, `RUNNING`, `BLOCKED`, `WAITING_FOR_AGENT`, `WAITING_FOR_HUMAN`, `SUCCEEDED`, `FAILED`, `CANCELLED`, `SUPERSEDED`.
+
+### Event-based progress
+
+Meaningful lifecycle events are recorded for milestones such as task completion, blockers, artifact production, gate submission, human decisions, phase changes, and re-entry.
+
+Raw shell commands, timers, file-by-file edits, and internal telemetry may remain available as drill-down evidence, but they are not the primary human-facing progress stream.
+
+### Human-readable status
+
+The preferred status answers:
+
+1. Where are we?
+2. What is happening now?
+3. What finished?
+4. What is blocked or waiting?
+5. What risks matter?
+6. What decision or action is next?
+
+Example:
+
+```text
+CODEFOUNDRY
+Project: Sleep Tracker
+Phase: IMPLEMENTATION
+Progress: 72%
+
+CURRENTLY WORKING
+🟢 Engineering — implementing authentication
+🟢 QA — preparing regression tests
+⏳ Security — waiting for authentication implementation
+
+LAST COMPLETED
+✓ Requirements approved
+✓ Technical plan approved
+
+RISKS
+⚠ Hosting environment not selected
+
+NEXT GATE
+🔴 Security review
+
+NEXT ACTION
+Complete authentication and hand off to Security.
+```
+
+Progress percentages are approximate unless the lifecycle has a deterministic measurement model.
+
+### Governance correction
+
+Version 1.0.1 explicitly separates implementation intent from technical-plan approval.
+
+```text
+“Build it now”
+        ≠
+“Technical plan approved”
+```
+
+When a technical-plan gate applies, implementation must wait for explicit approval.
 
 ---
 
-## V1 repository structure
+## Repository structure
 
 ```text
 CodeFoundry/
@@ -138,7 +241,13 @@ CodeFoundry/
 ├── README.md
 │
 ├── workflows/
-│   └── lifecycle.md
+│   ├── lifecycle.md
+│   └── multi-agent-execution.md
+│
+├── execution/
+│   ├── task-ledger.md
+│   ├── event-log.md
+│   └── status.md
 │
 ├── agents/
 │   ├── orchestrator.md
@@ -158,75 +267,47 @@ CodeFoundry/
 ├── gates/
 │   └── human-approval.md
 │
-└── state/
-    └── project-state.md
+├── state/
+│   └── project-state.md
+│
+└── docs/
+    ├── V1_BUILD_REPORT.md
+    ├── V1_0_1_BUILD_REPORT.md
+    └── SKILL_PACKAGING.md
 ```
-
-The structure is intentionally small. It is expected to change as V1 is exercised and evidence shows what should be kept, removed, or expanded.
 
 ---
 
-## Lifecycle
+## Core operating model
 
-The V1 lifecycle is:
+CodeFoundry separates **orchestration** from **judgment**.
 
-1. Idea
-2. Problem
-3. Target User
-4. Validation
-5. Concept
-6. Naming
-7. Name Validation
-8. Market / Competitor Research
-9. Feasibility
-10. Requirements
-11. Product Definition
-12. Architecture
-13. Security / Privacy
-14. Technical Plan
-15. Implementation
-16. Testing
-17. Review
-18. Integration
-19. Staging
-20. Release Readiness
-21. Deployment
-22. Production
-23. Monitoring
-24. Incident / Improvement
-25. Next Iteration
+### System responsibility
 
-Not every project needs identical depth at every stage. Risk determines how much rigor is appropriate.
+The system determines:
 
----
+- what phase the project is in
+- what is missing
+- what is uncertain
+- what should happen next
+- which specialist agents are appropriate
+- what evidence should be researched
+- what tasks can run in parallel
+- what dependencies must be respected
+- what artifact should be produced
+- whether an artifact is sufficiently complete for the current gate
+- what progress should be reported
 
-## Artifact-driven workflow
+### Human responsibility
 
-CodeFoundry uses durable artifacts as lifecycle memory.
+The human determines:
 
-A simplified handoff looks like:
-
-```text
-intent.md
-   ↓
-ideation.md
-   ↓
-validation.md
-   ↓
-requirements.md
-   ↓
-plan.md
-   ↓
-implementation + tests
-   ↓
-release evidence
-   ↓
-production evidence
-   ↓
-incident / improvement record
-```
-
-The important property is not the filenames. The important property is that meaningful decisions and evidence survive beyond the immediate conversation.
+- whether a consequential direction is acceptable
+- whether a product decision is approved
+- whether risk is acceptable
+- whether a release should proceed
+- whether an exception should be accepted
+- whether the project should continue, change direction, or stop
 
 ---
 
@@ -245,6 +326,8 @@ ESCALATED → human/legal/security/etc. review
 
 CodeFoundry must never treat absence of an explicit approval as approval.
 
+Material changes can invalidate earlier approvals and require affected downstream work to be re-run.
+
 ---
 
 ## Research and evidence discipline
@@ -253,6 +336,7 @@ CodeFoundry distinguishes between:
 
 - verified facts
 - user-provided facts
+- observations
 - assumptions
 - inferences
 - recommendations
@@ -261,106 +345,148 @@ CodeFoundry distinguishes between:
 
 Externally verifiable information should be researched when it can materially affect a decision.
 
-For example, naming research can examine existing products, companies, repositories, domains, package registries, app stores, and obvious language/geographic conflicts. A research result is not the same as legal clearance.
+Research evidence is not automatically legal clearance, certification, or approval.
 
 ---
 
 ## Specialist model
 
-V1 does not require dozens of permanently active agents.
-
-Specialists are activated according to need.
+The initial specialist set is intentionally small:
 
 | Role | Primary responsibility |
 |---|---|
-| Orchestrator | lifecycle control, routing, gates, next action |
+| Orchestrator | lifecycle control, routing, gates, task graph, next action |
 | Product | problem, user, value, scope, requirements |
 | Research | evidence, market, competitors, naming, validation |
-| Engineering | technical planning and implementation concerns |
+| Engineering | technical planning and implementation |
 | QA | verification, testing, quality evidence |
 | Security | security, privacy, threats, risk |
 
-Later versions may add architecture, release, operations, incident, documentation, compliance, or domain-specific specialists.
+Only required specialists should be activated. Multiple specialists may work concurrently when the dependency graph permits it.
 
 ---
 
-## What V1 deliberately does not include
+## State and coordination
 
-V1 does not attempt to provide:
+Project state is the authoritative current snapshot.
 
-- a web dashboard
-- a hosted SaaS service
-- user authentication
+The task ledger records work ownership and execution state.
+
+The event log records meaningful history.
+
+The human-facing status summarizes current progress.
+
+This separation prevents the conversation itself from becoming the only source of project memory.
+
+---
+
+## Failure, blocking, and re-entry
+
+Failed tasks remain visible. Retries do not erase failure evidence.
+
+The orchestrator must detect or surface:
+
+- dependency blockers
+- circular dependencies
+- repeated retries without new evidence
+- agent-to-agent livelock
+- conflicting authoritative writes
+- downstream work invalidated by new evidence
+
+When re-entry occurs, affected artifacts and decisions remain in history and affected downstream gates are re-run.
+
+---
+
+## Runtime boundary
+
+Version 1.0.1 defines the multi-agent coordination protocol but does not claim to be a universal agent runtime.
+
+It does not itself provide:
+
+- a hosted workflow engine
+- automatic process spawning on every host
+- a database-backed runtime
+- a dashboard
+- authentication
 - billing
-- distributed agent infrastructure
-- a database-backed orchestration engine
-- enterprise identity integration
-- every possible SDLC template
-- dozens of specialist roles
-- automatic legal approval
-- automatic commercial validation
+- distributed infrastructure
 - autonomous production deployment
 
-Those are potential future capabilities, not V1 requirements.
+A compatible host/runtime can implement these capabilities around the CodeFoundry contracts.
 
 ---
 
-## How V1 should be evaluated
+## Version 1.0.1 acceptance target
 
-Do not judge V1 only by whether the files look good.
+A host integration must demonstrate:
 
-Exercise the lifecycle with real project work and ask:
+| Test | Expected |
+|---|---|
+| Fresh project creates task graph | Pass |
+| Independent Product + Research work can run concurrently | Pass |
+| Dependent Engineering work waits for upstream outputs | Pass |
+| Conflicting writes are serialized | Pass |
+| Failed specialist work remains visible | Pass |
+| Blocked/waiting work is visible to the human | Pass |
+| Human-facing status avoids raw telemetry flooding | Pass |
+| Human gate blocks execution | Pass |
+| “Build it now” cannot approve an unreviewed technical plan | Pass |
+| Material plan changes trigger affected re-approval | Pass |
+| Re-entry creates affected downstream work | Pass |
+| Circular dependencies are detected | Pass |
+| Livelock/retry loops are stopped | Pass |
+
+These are acceptance targets, not claims that the repository alone provides the runtime required to execute them.
+
+---
+
+## How the version should be evaluated
+
+Do not judge CodeFoundry only by whether its documents look good.
+
+Exercise it with a fresh software idea and observe:
 
 ### Lifecycle
 
 - Did it know the current stage?
 - Did it know what should happen next?
-- Did it avoid skipping required stages?
+- Did it avoid silently skipping required work?
 - Could it move backward when evidence required it?
+
+### Multi-agent execution
+
+- Were independent specialists actually separated by the host?
+- Did independent tasks run concurrently?
+- Were dependencies respected?
+- Were conflicts and failures visible?
 
 ### Human control
 
 - Did it stop at meaningful decision points?
 - Could a human reject and revise a proposal?
 - Was approval evidence recorded?
+- Did implementation wait for required technical-plan approval?
 
-### Research
+### Observability
 
-- Did it identify important unknowns?
-- Did it research externally verifiable claims?
-- Did it distinguish facts from assumptions?
+- Could a human leave the project for 30–40 minutes and understand what happened from the status summary?
+- Were meaningful milestones reported?
+- Were blocked and waiting states visible?
+- Could detailed evidence be inspected without forcing the human to watch it continuously?
 
-### Artifacts
-
-- Were the artifacts useful?
-- Could the next stage operate from them?
-- Was traceability preserved?
-
-### State
+### State and artifacts
 
 - Could work resume after interruption?
 - Was important context preserved?
+- Could the next specialist operate from durable artifacts rather than conversation reconstruction?
 
-### Routing
-
-- Were the correct specialists activated?
-- Were unnecessary specialists avoided?
-
-### Product value
-
-- Did the lifecycle prevent an expensive mistake?
-- Did it reduce ambiguity?
-- Did it improve delivery discipline?
-
-The answers determine V2.
+The answers determine the next version.
 
 ---
 
-## First major post-V1 gate: product feasibility
+## Product feasibility gate
 
-After V1 is exercised, the first major review is not simply a feature review.
-
-It is a **commercial and product feasibility review of CodeFoundry itself**.
+After execution validation, the next major review remains the commercial and product feasibility of CodeFoundry itself.
 
 The review should determine:
 
@@ -383,7 +509,7 @@ The review should determine:
 - willingness to pay
 - commercial MVP
 
-Possible outcomes are deliberately:
+Possible outcomes remain:
 
 ```text
 KEEP
@@ -392,35 +518,49 @@ PIVOT
 ABANDON
 ```
 
-The project should be willing to accept any of these outcomes based on evidence.
-
 ---
 
-## V1 → VN direction
+## Version evolution
 
-The expected evolution is:
+The version sequence now intentionally uses **1.0.1** for the multi-agent execution/observability milestone requested for this project.
+
+Future versions should earn their complexity through evidence rather than being predetermined feature promises.
 
 ```text
-V1
-Functional lifecycle proof
+V1.0
+Functional lifecycle/control-plane foundation
         ↓
-V2
-Reliable state + better artifacts
+V1.0.1
+Multi-agent execution contract + progress observability
         ↓
-V3
-Structured orchestration + validation
+Future
+Reliable runtime + state + validation + governance + integrations
         ↓
-V4
-Governance + integrations
-        ↓
-V5+
-Productization
-        ↓
-VN
 Mature production/commercial platform
 ```
 
-This is a direction, not a fixed feature promise. Each version should earn its complexity through evidence from the previous version.
+---
+
+## Reference documents
+
+- [`SKILL.md`](SKILL.md) — operational entry point
+- [`workflows/lifecycle.md`](workflows/lifecycle.md) — lifecycle and transitions
+- [`workflows/multi-agent-execution.md`](workflows/multi-agent-execution.md) — task graph and coordination
+- [`execution/task-ledger.md`](execution/task-ledger.md) — task contract
+- [`execution/event-log.md`](execution/event-log.md) — event contract
+- [`execution/status.md`](execution/status.md) — human-facing progress contract
+- [`agents/orchestrator.md`](agents/orchestrator.md) — control role
+- [`agents/product.md`](agents/product.md) — product role
+- [`agents/research.md`](agents/research.md) — research role
+- [`agents/engineering.md`](agents/engineering.md) — engineering role
+- [`agents/qa.md`](agents/qa.md) — QA role
+- [`agents/security.md`](agents/security.md) — security role
+- [`gates/human-approval.md`](gates/human-approval.md) — human gate contract
+- [`state/project-state.md`](state/project-state.md) — state contract
+- [`artifacts/`](artifacts/) — lifecycle artifact templates
+- [`docs/V1_0_1_BUILD_REPORT.md`](docs/V1_0_1_BUILD_REPORT.md) — version 1.0.1 build and acceptance record
+- [`docs/V1_BUILD_REPORT.md`](docs/V1_BUILD_REPORT.md) — original V1 implementation record
+- [`docs/SKILL_PACKAGING.md`](docs/SKILL_PACKAGING.md) — skill packaging guidance
 
 ---
 
@@ -433,33 +573,10 @@ CodeFoundry favors:
 - artifacts over ephemeral conversation
 - traceability over guesswork
 - risk-based rigor over bureaucracy
+- independent specialist work over one-session role simulation
+- milestone observability over telemetry flooding
 - small working increments over premature architecture
 - production behavior over demo behavior
 - customer evidence over internal enthusiasm
-
----
-
-## V1 reference documents
-
-- [`SKILL.md`](SKILL.md) — operational entry point
-- [`workflows/lifecycle.md`](workflows/lifecycle.md) — lifecycle and transitions
-- [`agents/orchestrator.md`](agents/orchestrator.md) — control role
-- [`agents/product.md`](agents/product.md) — product role
-- [`agents/research.md`](agents/research.md) — research role
-- [`agents/engineering.md`](agents/engineering.md) — engineering role
-- [`agents/qa.md`](agents/qa.md) — QA role
-- [`agents/security.md`](agents/security.md) — security role
-- [`gates/human-approval.md`](gates/human-approval.md) — human gate contract
-- [`state/project-state.md`](state/project-state.md) — state contract
-- [`artifacts/`](artifacts/) — V1 artifact templates
-- [`docs/V1_BUILD_REPORT.md`](docs/V1_BUILD_REPORT.md) — detailed V1 implementation record
-
----
-
-## Long-term vision
-
-The long-term direction is not simply a system that generates code.
-
-It is a reusable production engineering control system that can take software intent, coordinate the necessary lifecycle activities, preserve decisions and evidence, enforce appropriate gates, and guide work into production operations and the next iteration.
 
 **Build → Test → Learn → Decide → Evolve.**
