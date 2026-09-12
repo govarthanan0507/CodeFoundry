@@ -1,6 +1,6 @@
 ---
 name: codefoundry-frontend-developer
-description: Production frontend worker for CodeFoundry. Builds approved frontend work, establishes persistent design language, runs the application, verifies real browser behavior, performs visual/responsive/accessibility critique, fixes findings, and returns evidence-backed completion status.
+description: Production frontend worker for CodeFoundry. Builds approved frontend work, establishes persistent design language, runs the application, verifies real browser behavior, performs visual/responsive/accessibility critique, applies advisory UX-principle critique, fixes findings, and returns evidence-backed completion status.
 ---
 
 # CodeFoundry Frontend Developer Skill
@@ -84,7 +84,7 @@ Before writing UI code, identify:
 - interaction model
 - visual tone appropriate to the product
 
-Use the Taste Skill approach as design-quality reference: infer the design direction from the brief rather than defaulting to generic templates. Its current skill uses design variance, motion intensity, and visual density as contextual design dials. Do not copy those values blindly; tune them to the product. urlTaste Skill referencehttps://github.com/Leonxlnx/taste-skill
+Use the Taste Skill approach as design-quality reference: infer the design direction from the brief rather than defaulting to generic templates. Its current skill uses design variance, motion intensity, and visual density as contextual design dials. Do not copy those values blindly; tune them to the product.
 
 ## 4. DESIGN.md
 
@@ -109,7 +109,7 @@ At minimum capture:
 - accessibility requirements
 - explicit anti-patterns / do-not rules
 
-The `DESIGN.md` concept is deliberately separate from build instructions: it describes how the product should look and feel, while an agent instruction file describes how the project should be built. The CodeFoundry worker uses both concepts. urlDESIGN.md reference collectionhttps://github.com/voltagent/awesome-design-md
+The `DESIGN.md` concept is deliberately separate from build instructions: it describes how the product should look and feel, while an agent instruction file describes how the project should be built. The CodeFoundry worker uses both concepts.
 
 ## 5. Implementation
 
@@ -159,8 +159,6 @@ playwright-cli screenshot
 
 Use snapshot refs to interact with the current page. Prefer snapshots for structural inspection; use screenshots when visual inspection or evidence is useful.
 
-The Playwright CLI skill is specifically designed for coding agents and supports browser interaction, page testing, snapshots, screenshots, and Playwright workflows. urlPlaywright CLI referencehttps://github.com/microsoft/playwright-cli
-
 ## 8. Verification matrix
 
 For every material frontend task, evaluate the applicable checks:
@@ -195,6 +193,36 @@ Ask:
 - Are error/empty/loading states credible?
 - Is there unnecessary complexity?
 - Are there runtime errors or broken assets?
+
+### Advisory UX-principles critique
+
+Also consult `UX_PRINCIPLES.md` as critic knowledge.
+
+These principles are **advisory heuristics, not hard acceptance gates**. Do not mechanically evaluate every principle on every task. Select only principles materially relevant to the current screen, workflow, device/input method, and user task.
+
+Consider, where relevant:
+
+- decision load: Hick, Miller, Pareto
+- interaction ergonomics: Fitts, target distance
+- familiarity/consistency: Jakob, proximity, similarity, uniform connectedness
+- hierarchy/attention: Von Restorff, serial position, Prägnanz
+- feedback/completion: Doherty, Peak-End, Zeigarnik
+- complexity: Tesler, Occam, Parkinson
+- input/output behavior: Postel
+
+For each material observation, reason as:
+
+```text
+OBSERVATION
+→ RELEVANT PRINCIPLE
+→ USER IMPACT
+→ RECOMMENDATION
+→ EVIDENCE
+```
+
+Use `PASS`, `ADVISORY`, `MAJOR`, `BLOCKER`, or `N/A` as critique outcomes where useful. These labels do not override the CodeFoundry completion contract. Do not invent universal numeric thresholds for UX principles; use project/platform evidence when available.
+
+Prefer a small number of high-value findings over a 20-item checklist. If a principle is intentionally violated for a defensible product reason, record the trade-off rather than forcing a fix.
 
 Fix issues that are within scope. Re-run the affected checks.
 
