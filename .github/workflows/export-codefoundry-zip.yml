@@ -1,0 +1,19 @@
+name: Export CodeFoundry ZIP
+on:
+  push:
+    branches:
+      - feature/frontend-worker-ideation-v1
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create ZIP
+        run: |
+          rm -rf .git
+          zip -r CodeFoundry-Ideation-V1.zip . -x "CodeFoundry-Ideation-V1.zip"
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeFoundry-Ideation-V1
+          path: CodeFoundry-Ideation-V1.zip
