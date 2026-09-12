@@ -19,9 +19,9 @@ CodeFoundry is a reusable SDLC control-plane skill. It determines what work shou
 
 ## Version
 
-**Version 1.0.1** — Multi-Agent Execution & Progress Observability.
+**Version 1.0.1** — Multi-Agent Execution & Progress Observability, with Ideation Phase 1 intake integration.
 
-Version 1.0.1 extends the V1 foundation with an explicit multi-agent execution protocol, task/dependency coordination, event-based progress reporting, blocked/waiting states, and human-readable status. It remains a host-agnostic skill contract; the host/runtime is responsible for actually creating and scheduling agent processes or sessions.
+Version 1.0.1 extends the V1 foundation with an explicit multi-agent execution protocol, task/dependency coordination, event-based progress reporting, blocked/waiting states, and human-readable status. The Ideation Phase 1 integration adds disciplined intent extraction, targeted clarification, context retention, and preservation of user-provided references within the existing ideation artifact. It remains a host-agnostic skill contract; the host/runtime is responsible for actually creating and scheduling agent processes or sessions.
 
 ## Operating contract
 
@@ -54,15 +54,132 @@ When the user introduces a new software idea or objective:
 1. Determine whether this is a new or existing project.
 2. Initialize project state if needed.
 3. Start at IDEATION unless accepted artifacts establish a later phase.
-4. Identify facts, assumptions, unknowns, risks, dependencies, and decisions.
-5. Route only the specialist agents required for the current stage.
-6. Run independent work in parallel when safe and useful.
-7. Create the appropriate durable artifact.
-8. Validate the artifact.
-9. Evaluate the applicable human gate.
-10. Stop for human approval when required.
-11. Record the decision and update state.
-12. Create the next task set and determine the next valid action.
+4. For a new idea, execute the existing **Ideation Phase 1 — Idea Intake** procedure before moving into problem framing or downstream analysis.
+5. Identify facts, assumptions, unknowns, risks, dependencies, and decisions.
+6. Route only the specialist agents required for the current stage.
+7. Run independent work in parallel when safe and useful.
+8. Create the appropriate durable artifact.
+9. Validate the artifact.
+10. Evaluate the applicable human gate.
+11. Stop for human approval when required.
+12. Record the decision and update state.
+13. Create the next task set and determine the next valid action.
+
+## Ideation Phase 1 — Idea Intake integration
+
+Phase 1 remains part of the existing lifecycle. It is not a separate subsystem, research engine, or alternate artifact model.
+
+### Objective
+
+Turn a raw human idea into a faithful, structured understanding of that idea while preserving the user's own context and references. Phase 1 should help a beginner explain what they have in mind without exposing unnecessary SDLC terminology.
+
+Phase 1 produces the existing `artifacts/ideation.md` artifact and prepares it for the existing Phase 1 gate.
+
+### Conversation discipline
+
+Use a high-value-question approach:
+
+- First understand the user's intent before asking for detail.
+- Identify only the missing information that materially changes the current understanding.
+- Ask the smallest useful number of questions.
+- Use **three critical questions as the normal upper bound for an initial clarification round**, not as a rigid quota.
+- If an answer reveals a new material ambiguity, a later focused question is allowed.
+- Do not repeat questions that have already been answered or explicitly rejected.
+- Do not overwhelm the user with an SDLC questionnaire.
+- Prefer plain-language questions such as who they imagine using it, what problem it should help with, what they have seen, or what constraints matter.
+
+The governing principle is:
+
+> **Do not ask the user something unless the answer can materially improve CodeFoundry's understanding of the idea.**
+
+### Context retention
+
+Maintain a Phase 1 context block containing, at minimum:
+
+- original idea
+- confirmed information
+- user corrections or rejected interpretations
+- current understanding
+- important constraints
+- unresolved questions
+- user-provided references
+- clarification history
+
+This context is durable working information. It prevents the system from repeatedly asking the same question or silently changing its interpretation.
+
+### User-provided references
+
+The user may optionally provide material they want CodeFoundry to look at. Supported reference types include:
+
+- website URL
+- GitHub repository
+- document or PDF
+- screenshot
+- app or product
+- notes or research
+- other relevant material
+
+References are first-class records in the existing ideation artifact. They must preserve what the user said about why the reference matters.
+
+A user-provided reference is **evidence of the user's interest or context, not proof of a product claim, market demand, feasibility, legal status, technical suitability, or competitor relationship**.
+
+GitHub is simply one normal reference source. Phase 1 does not create a separate GitHub subsystem.
+
+### Phase 1 boundary
+
+Phase 1 may:
+
+- capture the raw idea verbatim,
+- extract and summarize intent,
+- distinguish explicit user statements from inference,
+- identify explicitly stated users and needs,
+- capture constraints and exclusions,
+- identify assumptions and unknowns,
+- ask targeted clarification questions,
+- collect and label user-provided references,
+- preserve supplied research or notes,
+- record understanding confidence,
+- validate the Idea Intake artifact,
+- determine whether the idea is ready for the next stage.
+
+Phase 1 must **not** prematurely:
+
+- decide whether the product should be built,
+- validate market demand,
+- perform full competitor or market analysis,
+- make feasibility conclusions,
+- define architecture or technology,
+- produce requirements or an MVP,
+- turn references into requirements,
+- treat supplied examples as verified evidence,
+- bypass later human gates.
+
+Detailed analysis belongs to the later lifecycle stages that already exist in CodeFoundry.
+
+### Specialist routing for Phase 1
+
+Default routing is intentionally small:
+
+- **Orchestrator** — controls the phase, context, questions, artifact, and gate.
+- **Product** — used when product/user/need interpretation requires specialist support.
+- **Research** — used only when the user has supplied references that need basic preservation/identification or when explicit external research is genuinely required by the current phase.
+
+Engineering, QA, and Security are not activated merely because a user has an idea. They are introduced when their lifecycle stage or risk warrants them.
+
+### Phase 1 quality check
+
+Before submitting the existing Phase 1 gate, verify that:
+
+1. The original idea is preserved.
+2. User statements and CodeFoundry inferences are distinguishable.
+3. The current understanding is faithful to the user's intent.
+4. Important ambiguity has been surfaced rather than hidden.
+5. Clarification questions were targeted and non-redundant.
+6. Confirmed constraints and exclusions are preserved.
+7. User-provided references are preserved with type, source, user description, intended relevance, and analysis status.
+8. GitHub references use the same reference model as other sources.
+9. No downstream market, feasibility, technical, validation, or implementation conclusion has been smuggled into Phase 1.
+10. The artifact is sufficient for the next stage without requiring reconstruction of the conversation.
 
 ## Lifecycle
 
@@ -337,6 +454,7 @@ When re-entry occurs:
 Read the following only as needed:
 
 - `workflows/lifecycle.md` — lifecycle, transitions, and stage completion
+- `workflows/ideation-phase-1.md` — existing lifecycle Phase 1 execution procedure
 - `workflows/multi-agent-execution.md` — task graph, parallelism, dependencies, coordination
 - `execution/task-ledger.md` — task contract and execution states
 - `execution/event-log.md` — meaningful event contract
@@ -362,6 +480,8 @@ CodeFoundry must not:
 - claim legal clearance without authoritative legal evidence
 - allow one specialist to silently rewrite another specialist's authoritative output
 - create circular agent work without detection and escalation
+- let Phase 1 turn user-provided references into unverified requirements or conclusions
+- overwhelm a beginner with unnecessary lifecycle terminology or low-value questions
 
 ## Completion boundary
 
@@ -391,6 +511,8 @@ The version is considered operationally useful only if a fresh software idea can
 7. drill-down evidence separated from human-facing status,
 8. correct human approval boundaries,
 9. technical-plan approval before implementation when required,
-10. re-entry when later evidence invalidates earlier work.
+10. re-entry when later evidence invalidates earlier work,
+11. Phase 1 can capture a raw idea into the existing ideation artifact without prematurely performing downstream analysis,
+12. Phase 1 can preserve optional user-provided references, including GitHub repositories, as traceable context.
 
 Failure of the governance rules is a release blocker even if the generated software itself works.
