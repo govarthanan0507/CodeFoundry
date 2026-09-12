@@ -8,18 +8,291 @@ CodeFoundry is designed to take a software idea or software objective and guide 
 
 ---
 
-## Current version
+## Current development milestone
 
-# Version 1.0.1 — Multi-Agent Execution & Progress Observability
+# Ideation Engine V1 — Phase-by-Phase Development
 
-Version 1.0.1 is the first execution-focused evolution of the V1 foundation. It keeps lifecycle authority centralized in the orchestrator while allowing independent specialist agents to work concurrently where dependencies permit.
+CodeFoundry is currently developing **Ideation Engine V1** on the dedicated `ideation_engine_V.1` branch.
 
-It directly addresses two findings from the first real lifecycle exercise:
+This branch is intentionally isolated from `main`. The purpose is to build, test, challenge, and refine the complete Ideation Engine before merging it into the stable CodeFoundry line.
 
-1. specialist roles were conceptual within one session instead of explicit independent work identities;
-2. user-facing progress was too close to low-level execution telemetry.
+The Ideation Engine is not a separate lifecycle or a replacement for the CodeFoundry control plane. It is the dedicated ideation execution layer inside the existing lifecycle.
 
-It also closes the identified governance defect where implementation could occur before technical-plan approval.
+### Ideation Engine V1 goal
+
+Turn a normal user's rough idea into a **validated, decision-ready product initiative** through a guided, beginner-friendly process while CodeFoundry keeps the underlying SDLC complexity internal.
+
+The user should be able to describe an idea naturally without needing to understand product-management or software-engineering terminology.
+
+```text
+USER IDEA
+   ↓
+IDEA INTAKE
+   ↓
+PROBLEM FRAMING
+   ↓
+TARGET USER / CONTEXT
+   ↓
+VALIDATION
+   ↓
+CONCEPT
+   ↓
+MARKET / ALTERNATIVES
+   ↓
+FEASIBILITY
+   ↓
+MVP SCOPE
+   ↓
+ADVERSARIAL REVIEW
+   ↓
+IDEATION DECISION
+   ↓
+INCEPTION / DOWNSTREAM SDLC
+```
+
+The phases are developed incrementally. A later phase must not silently bypass the gates, evidence requirements, or decisions of earlier phases.
+
+---
+
+## Ideation Engine V1 — development status
+
+### Phase 1 — Idea Intake / Understanding
+
+**Current development focus: Phase 1.**
+
+Phase 1 turns an unstructured idea into a faithful structured understanding of what the user is trying to create.
+
+It captures:
+
+- the user's original idea
+- interpreted intent
+- what the user explicitly has in mind
+- intended users when stated
+- the problem or need as described by the user
+- explicit constraints and exclusions
+- assumptions
+- unknowns
+- clarification questions and answers
+- current understanding and confidence
+- user-provided research and references
+- relevant websites
+- GitHub repositories
+- documents and PDFs
+- screenshots
+- apps/products
+- notes and other supplied material
+
+### Beginner-friendly interaction
+
+Phase 1 is deliberately conversational.
+
+CodeFoundry should ask only the questions that materially improve its understanding of the idea. A maximum of **three critical clarification questions in an initial round** is the normal guardrail; it is not a rigid questionnaire quota. If an answer reveals a genuinely new ambiguity, another focused round may be appropriate.
+
+The system should avoid making the user operate an SDLC form.
+
+For example:
+
+```text
+User:
+"I want to build an app like Uber but for home cleaning."
+
+CodeFoundry:
+"Got it. Who do you imagine using it most — people
+looking for cleaners, cleaning professionals, or both?"
+```
+
+The purpose is understanding, not premature product judgment.
+
+### Reference and evidence collection
+
+Phase 1 supports an **optional** prompt such as:
+
+> "Do you have any references you'd like me to look at?"
+
+The user may provide nothing, or may provide websites, GitHub repositories, PDFs, screenshots, apps/products, notes, or other research.
+
+These references are preserved as first-class inputs to the Ideation artifact.
+
+A user-provided reference is treated as **evidence of user interest/context, not automatically as evidence of truth**. Phase 1 does not turn a supplied website into a validated competitor, a supplied document into verified market evidence, or a GitHub repository into a technical recommendation.
+
+Full market, competitor, feasibility, technical, legal, and validation analysis belongs to later ideation phases.
+
+### Prompt methodology integration
+
+Ideation Engine V1 incorporates selected methodology from structured prompt-design approaches where it strengthens Phase 1:
+
+- intent extraction
+- identification of critical missing context
+- targeted clarification
+- limited questioning
+- context retention
+- explicit constraints
+- examples and references
+- success/understanding checks
+- quality verification
+
+The methodology is adapted to CodeFoundry's product-development lifecycle. It is **not** a separate prompt-generation subsystem.
+
+### Phase 1 flow
+
+```text
+RAW IDEA
+  ↓
+CAPTURE ORIGINAL IDEA
+  ↓
+EXTRACT INITIAL INTENT
+  ↓
+IDENTIFY CRITICAL AMBIGUITY
+  ↓
+ASK FEW HIGH-VALUE QUESTIONS
+  ↓
+UPDATE UNDERSTANDING
+  ↓
+REASSESS REMAINING AMBIGUITY
+  ↓
+OPTIONALLY COLLECT USER REFERENCES
+  ↓
+BUILD EXISTING IDEATION ARTIFACT
+  ↓
+QUALITY CHECK
+  ↓
+PHASE 1 GATE
+  ↓
+PROBLEM FRAMING
+```
+
+### Phase 1 boundary
+
+Phase 1 must **not**:
+
+- decide whether the product is viable
+- decide whether it should be built
+- perform full market research
+- perform full competitor analysis
+- define architecture
+- choose technology
+- create production requirements
+- define the MVP
+- make final product decisions
+- perform full feasibility analysis
+- bypass a later approval gate
+
+Phase 1 may collect and preserve information that will be needed by those later activities.
+
+### Phase 1 completion target
+
+Phase 1 is complete when CodeFoundry has:
+
+- preserved the original idea;
+- separated user-provided information from inference;
+- captured the current understanding of the idea;
+- resolved the most important ambiguity that can reasonably be resolved at this stage;
+- avoided repetitive or unnecessary questions;
+- captured explicit constraints and exclusions;
+- preserved user-provided references;
+- recorded assumptions and unknowns;
+- produced and quality-checked the existing Ideation artifact;
+- determined the appropriate Phase 1 outcome;
+- respected the existing human gate.
+
+Possible outcomes include:
+
+```text
+READY FOR NEXT PHASE
+NEEDS CLARIFICATION
+BLOCKED
+```
+
+---
+
+## Ideation Engine V1 development strategy
+
+The Ideation Engine is being developed **phase by phase**, rather than as one large autonomous system.
+
+```text
+Phase 1 — Idea Intake          ← CURRENT
+Phase 2 — Problem Framing
+Phase 3 — Target User / Context
+Phase 4 — Validation
+Phase 5 — Concept
+Phase 6 — Market / Alternatives
+Phase 7 — Feasibility
+Phase 8 — MVP Scope
+Phase 9 — Adversarial Review
+Phase 10 — Ideation Decision
+```
+
+Each phase will be:
+
+1. designed against the existing CodeFoundry contracts;
+2. implemented in the dedicated development branch;
+3. tested independently;
+4. subjected to adversarial testing;
+5. corrected based on evidence;
+6. re-tested before the next phase is considered complete.
+
+The completed Ideation Engine will then undergo final integration testing before it is considered for merge into `main`.
+
+---
+
+## Branch strategy
+
+The Ideation Engine is intentionally isolated during development:
+
+```text
+main
+ │
+ │  Stable CodeFoundry baseline
+ │
+ └──────────────► ideation_engine_V.1
+                       │
+                       ├── Phase 1
+                       ├── Test
+                       ├── Adversarial review
+                       ├── Fix
+                       ├── Retest
+                       │
+                       ├── Phase 2
+                       ├── Test
+                       ├── Fix
+                       │
+                       └── ...
+                              ↓
+                       Ideation Engine V1
+                              ↓
+                         Final QA
+                              ↓
+                       Integration review
+                              ↓
+                         Merge to main
+```
+
+**No Ideation Engine work is considered part of stable `main` until the completed engine has earned that merge through testing and review.**
+
+---
+
+## Existing CodeFoundry foundation
+
+The Ideation Engine builds on the existing CodeFoundry control-plane foundation rather than replacing it.
+
+The foundation includes:
+
+- explicit lifecycle stages
+- durable artifact handoffs
+- persistent project-state expectations
+- dynamic specialist routing
+- research-before-assertion discipline
+- human approval gates
+- rejection and revision paths
+- traceability expectations
+- production and post-production lifecycle coverage
+- multi-agent execution contracts
+- task ownership and dependencies
+- event-based progress
+- blocked and waiting states
+- controlled re-entry
+
+The Ideation Engine therefore extends the existing system instead of introducing a parallel lifecycle.
 
 ---
 
@@ -91,144 +364,31 @@ The lifecycle is intentionally non-linear. Evidence discovered later can send a 
 
 ---
 
-## V1 foundation
+## Human control remains mandatory
 
-The original V1 foundation established:
+The Ideation Engine does not weaken CodeFoundry's existing governance model.
 
-- automatic lifecycle initiation for new ideas
-- explicit lifecycle stages
-- durable artifact handoffs
-- persistent project-state expectations
-- dynamic specialist routing
-- research-before-assertion discipline
-- human approval gates
-- rejection and revision paths
-- traceability expectations
-- production and post-production lifecycle coverage
-
-The goal was to prove the control loop before adding execution infrastructure.
-
----
-
-## Version 1.0.1 additions
-
-### Independent specialist execution
-
-Specialists are now defined as independent work identities rather than merely roles performed sequentially inside the orchestrator's reasoning.
+A user saying:
 
 ```text
-                         HUMAN
-                           │
-                           ▼
-                    ORCHESTRATOR
-                           │
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-       PRODUCT          RESEARCH       ENGINEERING
-          │                │                │
-          └────────────────┼────────────────┘
-                           ▼
-                           QA
-                           │
-                           ▼
-                        SECURITY
-                           │
-                           ▼
-                     ORCHESTRATOR
-                           │
-                           ▼
-                      HUMAN GATE
+"Build it now."
 ```
 
-The host/runtime may implement an agent as a separate session, worker process, queued job, container, remote agent, or another isolated execution identity.
+does not automatically approve decisions that require a later human gate.
 
-### Parallel execution
-
-Independent work can run concurrently when:
-
-- dependencies are satisfied;
-- outputs are independently producible;
-- writes do not conflict;
-- concurrency does not introduce a safety or correctness risk.
-
-Dependent work must wait. Human-gated work must stop until explicit approval exists.
-
-### Task ledger
-
-Every material task now has:
-
-- task ID
-- owner
-- phase
-- objective
-- dependencies
-- inputs
-- expected output
-- status
-- evidence
-- blockers/failure information
-
-Execution states include:
-
-`READY`, `RUNNING`, `BLOCKED`, `WAITING_FOR_AGENT`, `WAITING_FOR_HUMAN`, `SUCCEEDED`, `FAILED`, `CANCELLED`, `SUPERSEDED`.
-
-### Event-based progress
-
-Meaningful lifecycle events are recorded for milestones such as task completion, blockers, artifact production, gate submission, human decisions, phase changes, and re-entry.
-
-Raw shell commands, timers, file-by-file edits, and internal telemetry may remain available as drill-down evidence, but they are not the primary human-facing progress stream.
-
-### Human-readable status
-
-The preferred status answers:
-
-1. Where are we?
-2. What is happening now?
-3. What finished?
-4. What is blocked or waiting?
-5. What risks matter?
-6. What decision or action is next?
-
-Example:
+In particular:
 
 ```text
-CODEFOUNDRY
-Project: Sleep Tracker
-Phase: IMPLEMENTATION
-Progress: 72%
-
-CURRENTLY WORKING
-🟢 Engineering — implementing authentication
-🟢 QA — preparing regression tests
-⏳ Security — waiting for authentication implementation
-
-LAST COMPLETED
-✓ Requirements approved
-✓ Technical plan approved
-
-RISKS
-⚠ Hosting environment not selected
-
-NEXT GATE
-🔴 Security review
-
-NEXT ACTION
-Complete authentication and hand off to Security.
+User enthusiasm
+      ≠
+Technical approval
+      ≠
+Release approval
+      ≠
+Production approval
 ```
 
-Progress percentages are approximate unless the lifecycle has a deterministic measurement model.
-
-### Governance correction
-
-Version 1.0.1 explicitly separates implementation intent from technical-plan approval.
-
-```text
-“Build it now”
-        ≠
-“Technical plan approved”
-```
-
-When a technical-plan gate applies, implementation must wait for explicit approval.
+The system may continue only when the applicable gate conditions have been satisfied.
 
 ---
 
@@ -242,7 +402,8 @@ CodeFoundry/
 │
 ├── workflows/
 │   ├── lifecycle.md
-│   └── multi-agent-execution.md
+│   ├── multi-agent-execution.md
+│   └── ideation-phase-1.md
 │
 ├── execution/
 │   ├── task-ledger.md
@@ -399,7 +560,7 @@ When re-entry occurs, affected artifacts and decisions remain in history and aff
 
 ## Runtime boundary
 
-Version 1.0.1 defines the multi-agent coordination protocol but does not claim to be a universal agent runtime.
+The CodeFoundry repository defines contracts and operating procedures; it is not itself a universal hosted agent runtime.
 
 It does not itself provide:
 
@@ -416,115 +577,33 @@ A compatible host/runtime can implement these capabilities around the CodeFoundr
 
 ---
 
-## Version 1.0.1 acceptance target
-
-A host integration must demonstrate:
-
-| Test | Expected |
-|---|---|
-| Fresh project creates task graph | Pass |
-| Independent Product + Research work can run concurrently | Pass |
-| Dependent Engineering work waits for upstream outputs | Pass |
-| Conflicting writes are serialized | Pass |
-| Failed specialist work remains visible | Pass |
-| Blocked/waiting work is visible to the human | Pass |
-| Human-facing status avoids raw telemetry flooding | Pass |
-| Human gate blocks execution | Pass |
-| “Build it now” cannot approve an unreviewed technical plan | Pass |
-| Material plan changes trigger affected re-approval | Pass |
-| Re-entry creates affected downstream work | Pass |
-| Circular dependencies are detected | Pass |
-| Livelock/retry loops are stopped | Pass |
-
-These are acceptance targets, not claims that the repository alone provides the runtime required to execute them.
-
----
-
-## How the version should be evaluated
+## Evaluation philosophy
 
 Do not judge CodeFoundry only by whether its documents look good.
 
-Exercise it with a fresh software idea and observe:
+The Ideation Engine and the broader lifecycle must be exercised with realistic and adversarial scenarios.
 
-### Lifecycle
+Testing should verify that CodeFoundry:
 
-- Did it know the current stage?
-- Did it know what should happen next?
-- Did it avoid silently skipping required work?
-- Could it move backward when evidence required it?
-
-### Multi-agent execution
-
-- Were independent specialists actually separated by the host?
-- Did independent tasks run concurrently?
-- Were dependencies respected?
-- Were conflicts and failures visible?
-
-### Human control
-
-- Did it stop at meaningful decision points?
-- Could a human reject and revise a proposal?
-- Was approval evidence recorded?
-- Did implementation wait for required technical-plan approval?
-
-### Observability
-
-- Could a human leave the project for 30–40 minutes and understand what happened from the status summary?
-- Were meaningful milestones reported?
-- Were blocked and waiting states visible?
-- Could detailed evidence be inspected without forcing the human to watch it continuously?
-
-### State and artifacts
-
-- Could work resume after interruption?
-- Was important context preserved?
-- Could the next specialist operate from durable artifacts rather than conversation reconstruction?
+- understands a normal user's rough idea;
+- asks useful questions without overwhelming the user;
+- preserves context across turns;
+- does not repeatedly ask already answered questions;
+- distinguishes user statements from inference;
+- preserves user-provided references;
+- does not prematurely convert references into conclusions;
+- respects phase boundaries;
+- produces durable artifacts;
+- stops at required gates;
+- remains traceable when work is rejected, revised, blocked, or re-entered.
 
 The answers determine the next version.
 
 ---
 
-## Product feasibility gate
+## Future version evolution
 
-After execution validation, the next major review remains the commercial and product feasibility of CodeFoundry itself.
-
-The review should determine:
-
-- what is actually being sold
-- who has the problem
-- who uses it
-- who pays
-- measurable customer value
-- competitive alternatives
-- differentiation
-- product category
-- open vs proprietary boundaries
-- pricing model
-- distribution model
-- defensibility
-- operating cost
-- support burden
-- market opportunity
-- legal/IP considerations
-- willingness to pay
-- commercial MVP
-
-Possible outcomes remain:
-
-```text
-KEEP
-MODIFY
-PIVOT
-ABANDON
-```
-
----
-
-## Version evolution
-
-The version sequence now intentionally uses **1.0.1** for the multi-agent execution/observability milestone requested for this project.
-
-Future versions should earn their complexity through evidence rather than being predetermined feature promises.
+Future CodeFoundry versions should earn their complexity through evidence rather than being predetermined feature promises.
 
 ```text
 V1.0
@@ -532,6 +611,9 @@ Functional lifecycle/control-plane foundation
         ↓
 V1.0.1
 Multi-agent execution contract + progress observability
+        ↓
+Ideation Engine V1
+Dedicated phase-by-phase ideation execution
         ↓
 Future
 Reliable runtime + state + validation + governance + integrations
@@ -545,6 +627,7 @@ Mature production/commercial platform
 
 - [`SKILL.md`](SKILL.md) — operational entry point
 - [`workflows/lifecycle.md`](workflows/lifecycle.md) — lifecycle and transitions
+- [`workflows/ideation-phase-1.md`](workflows/ideation-phase-1.md) — Phase 1 execution procedure
 - [`workflows/multi-agent-execution.md`](workflows/multi-agent-execution.md) — task graph and coordination
 - [`execution/task-ledger.md`](execution/task-ledger.md) — task contract
 - [`execution/event-log.md`](execution/event-log.md) — event contract
